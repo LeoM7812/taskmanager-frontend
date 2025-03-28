@@ -24,7 +24,14 @@ export class TaskService {
   addTask(task: Task): Observable<Task> {
     return this.http.post<Task>(`${BASE_URL}/tasks`, { ...task });
   }
-
+  // assignUserToTask
+  assignUserToTask(taskId: number, userId: number): Observable<Task> {
+    return this.http.post<Task>(`${BASE_URL}/tasks/${taskId}/assignUser/${userId}`, {});
+  }
+  // getUserByEmail
+  getUserByEmail(email: string): Observable<any> {
+    return this.http.get<any>(`${BASE_URL}/users/${email}`);
+  }
   // updateTask
   updateTask(newTask: Task): Observable<Task> {
     console.log('newTask:', newTask);

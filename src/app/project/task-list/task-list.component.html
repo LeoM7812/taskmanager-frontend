@@ -49,6 +49,7 @@
 			<td *ngIf="role === 'ADMIN'">
 			  <button (click)="updateTask(task)" class="action-button">✏️</button>
 			  <button (click)="deleteTask(task.id)" class="action-button">❌</button>
+			  <button (click)="assignTaskToUser(task)" class="action-button">👤</button>
 			</td>
 		  </tr>
 		</ng-container>

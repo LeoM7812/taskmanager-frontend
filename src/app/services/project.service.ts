@@ -30,6 +30,9 @@ export class ProjectService {
     const { id, ...projectWithoutId } = project;
     return this.http.post<Project>(`${BASE_URL}/projects`, projectWithoutId);
   }
+  getProjectsWithTasksByUserEmail(email: string): Observable<Project[]> {
+    return this.http.get<Project[]>(`${BASE_URL}/projects/${email}/projects-with-tasks`);
+  }
 
 
   updateProject(id: number, project: Project): Observable<Project> {

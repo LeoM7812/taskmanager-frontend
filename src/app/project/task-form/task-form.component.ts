@@ -15,18 +15,19 @@ import {
 import { Task } from '../../task.model';
 import { TaskService } from '../../services/task.service';
 import { ProjectListComponent } from '../project-list/project-list.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.css',
 })
 export class TaskFormComponent {
   
   @Input() currentTask: Task | null = null;
-  @Input() formType: 'UPDATE' | 'CREATE' = 'CREATE';
+  @Input() formType: 'UPDATE' | 'CREATE' | 'ASSIGN' = 'CREATE';
   @Output() closePanel = new EventEmitter<'SUBMIT' | 'CANCEL'>();
   @Output() taskUpdated = new EventEmitter<void>();
   taskForm: FormGroup;
@@ -38,6 +39,7 @@ export class TaskFormComponent {
       name: ['', Validators.required],
       description: [''],
       dueDate: ['', Validators.required],
+      userEmail: [''],
     });
   }
 
@@ -57,8 +59,30 @@ export class TaskFormComponent {
   }
 
   handleSubmit() {
-    
-    if (this.taskForm.valid) {
+    if (this.formType === 'ASSIGN') {
+      const taskId = this.currentTask?.id || 0;
+      const userEmail = this.taskForm.value.userEmail;
+
+      if (userEmail) {
+        this.taskService.getUserByEmail(userEmail).subscribe((user) => {
+          if (user) {
+        const userId = user.id;
+        this.taskService.assignUserToTask(taskId, userId).subscribe({
+          next: (updatedTask) => {
+            console.log(`Task with ID ${taskId} successfully assigned to user with ID ${userId}`);
+            this.taskUpdated.emit();
+            this.closePanel.emit('SUBMIT');
+          },
+          error: (error) => console.error('Error assigning user to task:', error),
+        });
+          } else {
+        console.error(`User with email ${userEmail} not found`);
+          }
+        });
+      }
+      return;
+    }
+    if (this.taskForm.valid && (this.formType === 'CREATE' || this.formType === 'UPDATE')) {
       const newTask: Task = {
         ...this.taskForm.value,
         dueDate: new Date(this.taskForm.value.dueDate),

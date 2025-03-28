@@ -27,7 +27,8 @@ export class ProjectFormComponent implements OnInit {
     this.projectForm = this.fb.group({
       id: [this.currentProject?.id],
       name: [this.currentProject?.name || '', Validators.required],
-      description: [this.currentProject?.description || '']
+      description: [this.currentProject?.description || ''],
+      budget: [this.currentProject?.budget || 0, [Validators.required, Validators.min(0)]],
     });
   }
   handleSubmit(): void {
@@ -47,6 +48,7 @@ export class ProjectFormComponent implements OnInit {
         });
       } else {
         const updatedProject = { ...this.currentProject, ...newProject };
+        console.log("Budget",updatedProject.budget);
         this.projectService.updateProject(this.currentProject?.id!, updatedProject).subscribe({
           next: (response) => {
             console.log('Project updated successfully:', response);

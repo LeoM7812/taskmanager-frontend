@@ -10,7 +10,7 @@ const emptyTask = {
   description: '',
   dueDate: new Date(),
   completed: false,
-  project: { id: 0, name: '', description: '', tasks: [] },	
+  project: { id: 0, name: '', description: '',budget : 0, tasks: [] },	
   id: 0,
   user: { id: 0, firstname: '', lastname: '', email: '', password: '', role: '' },
 };
@@ -28,7 +28,7 @@ export class TaskListComponent {
   showModal: boolean = false;
   role: string = '';
   userEmail: string = '';
-  formType: 'CREATE' | 'UPDATE' = 'CREATE';
+  formType: 'CREATE' | 'UPDATE' | 'ASSIGN' = 'CREATE';
   selectedTask: Task = emptyTask;
 
 
@@ -67,6 +67,11 @@ constructor(private taskService: TaskService) {}
 
   }
 
+  assignTaskToUser(task: Task) {
+      this.selectedTask = task;
+      this.formType = 'ASSIGN';
+      this.showModal = true;
+    }
   updateTask(task: Task) {
     this.selectedTask = task;
     this.selectedTask.project.id = this.projectid;

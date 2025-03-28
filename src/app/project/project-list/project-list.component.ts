@@ -10,6 +10,7 @@ const emptyProject = {
   id: 0,
   name: '',
   description: '',
+  budget: 0,
   user: { id: 0, firstname: '', lastname: '', email: '', password: '', role: '' },
   tasks: [],
 };
@@ -37,7 +38,18 @@ export class ProjectListComponent implements OnInit {
           console.log('Role:', role)}});
 
       this.userEmail$ = of(this.readLocalStorageValue('EMAIL'));
-      this.projects$ = this.projectService.getProjects();
+      if(this.isAdmin){
+        this.projects$ = this.projectService.getProjects();
+      }
+      else{
+        this.userEmail$.subscribe(email => {
+        this.projectService.getProjectsWithTasksByUserEmail(email).subscribe((projects: Project[]) => {
+            this.projects$ = of(projects);
+            this.projects$ = of(projects.filter(project => project.tasks && project.tasks.length > 0));
+          });
+        });
+      }
+      
     }
     
 

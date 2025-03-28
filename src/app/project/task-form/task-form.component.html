@@ -1,8 +1,12 @@
 <div class="modal">
 	<div class="modal-content">
 		<form [formGroup]="taskForm" (ngSubmit)="handleSubmit()">
-			<p>{{formType === "UPDATE" ? "Update task" : "Add new task"}}</p>
-			<div>
+			<div *ngIf="formType === 'ASSIGN'">
+				<label for="task-assign">Assign to</label>
+				<input id="task-assign" type="email" formControlName="userEmail" placeholder="Enter email" />
+			</div>
+			<p *ngIf="formType !== 'ASSIGN'">{{formType === "UPDATE" ? "Update task" : "Add new task"}}</p>
+			<div *ngIf="formType !== 'ASSIGN'">
 				<label for="task-name">Task name</label>
 				<input id="task-name" formControlName="name" />
 				@if(taskForm.get('name')?.invalid && taskForm.get('name')?.touched) {
@@ -11,11 +15,11 @@
 				</div>
 				}
 			</div>
-			<div>
+			<div *ngIf="formType !== 'ASSIGN'">
 				<label for="task-description">Task description</label>
 				<input id="task-description" formControlName="description" />
 			</div>
-			<div>
+			<div *ngIf="formType !== 'ASSIGN'">
 				<label for="task-due-date">Task due date</label>
 				<input id="task-due-date" type="date" formControlName="dueDate" />
 				@if(taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched) {
