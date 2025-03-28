@@ -1,46 +1,74 @@
-<div class="task-list-container">
+<div class="task-list-container" >
+
 	<div class="heading">
-		<h3>Tasks</h3>
-
-		<div>
-			<span class="status-dot in-progress"></span>In Progress
-			<span class="status-dot completed"></span>Completed
-		</div>
+	  <h3>Tasks</h3>
+	  <div>
+		<span class="status-dot in-progress"></span>In Progress
+		<span class="status-dot completed"></span>Completed
+	  </div>
 	</div>
+  
+
 	<table>
-		<thead>
-			<tr>
-				<th>Task</th>
-				<th>Status</th>
-				<th>Due date</th>
-			</tr>
-		</thead>
-		<tbody>
-			@for(task of tasks$ | async; track task.id) {
-			<tr>
-				<td>
-					<label class="{{ task.completed ? 'completed-task' : '' }}">
-						<input type="checkbox" aria-label="Select task" [checked]="task.completed"
-							(click)="handleCheckbox(task.id!)" />{{ task.name }}
-					</label>
-				</td>
-				<td>
-					<span class="status-dot {{ task.completed ? 'completed' : 'in-progress' }}"></span>{{ task.completed ?
-					'Completed' : 'In Progress' }}
-				</td>
-				<td>{{task.dueDate | date:"YYYY-MM-dd"}}</td>
-				<td (click)="updateTask(task)">✏️</td>
-				<td (click)="deleteTask(task.id)">❌</td>
-			</tr>
-			}
-		</tbody>
-	</table>
+	  <thead>
+		<tr>
+		  <th>Task</th>
+		  <th>Status</th>
+		  <th>Due Date</th>
+		  <th>User</th>
+		  <th *ngIf="role === 'ADMIN'">Actions</th> 
+		</tr>
+	  </thead>
+	  <tbody>
 
-	<div class="button-container">
-		<button (click)="addNewTask()">Add New Task</button>
+		<ng-container *ngIf="tasks.length > 0">
+		  <tr *ngFor="let task of tasks; trackBy: trackByTaskId">
+
+			<td>
+			  <label [class.completed-task]="task.completed">
+				<input
+				  type="checkbox"
+				  aria-label="Select task"
+				  [checked]="task.completed"
+				  (click)="handleCheckboxChange(task)"
+				/>
+				{{ task.name }}
+			  </label>
+			</td>
+  
+
+			<td>
+			  <span class="status-dot {{ task.completed ? 'completed' : 'in-progress' }}"></span>
+			  {{ task.completed ? 'Completed' : 'In Progress' }}
+			</td>
+
+			<td>{{ task.dueDate | date: 'yyyy-MM-dd' }}</td>
+  
+
+			<td>{{ task.user?.email }}</td>
+			<td *ngIf="role === 'ADMIN'">
+			  <button (click)="updateTask(task)" class="action-button">✏️</button>
+			  <button (click)="deleteTask(task.id)" class="action-button">❌</button>
+			</td>
+		  </tr>
+		</ng-container>
+  
+		<tr *ngIf="tasks.length === 0">
+		  <td colspan="5" class="no-tasks">No tasks found.</td>
+		</tr>
+	  </tbody>
+	</table>
+  
+	<div *ngIf="role === 'ADMIN'" class="button-container">
+	  <button (click)="addNewTask()" class="add-task-button">Add New Task</button>
 	</div>
-	@if(showModal) {
-	<app-task-form (closePanel)="handleModalClose($event)" [currentTask]="selectedTask"
-		[formType]="formType"></app-task-form>
-	}
-</div>
+  
+	<div *ngIf="showModal">
+	  <app-task-form
+		(closePanel)="handleModalClose($event)"
+		[currentTask]="selectedTask"
+		[formType]="formType"
+		(taskUpdated)="refreshTasks()"
+	  ></app-task-form>
+	</div>
+  </div>

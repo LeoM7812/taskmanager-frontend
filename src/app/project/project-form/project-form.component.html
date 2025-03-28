@@ -1,0 +1,22 @@
+<div class="modal">
+    <div class="modal-content">
+        <form [formGroup]="projectForm" (ngSubmit)="handleSubmit()">
+            <p>{{formType === "UPDATE" ? "Update project" : "Create new project"}}</p>
+            <div>
+                <label for="project-name">Project name</label>
+                <input id="project-name" formControlName="name" />
+                <div *ngIf="projectForm.get('name')?.invalid && projectForm.get('name')?.touched">
+                    Project name is required.
+                </div>
+            </div>
+            <div>
+                <label for="project-description">Project description</label>
+                <input id="project-description" formControlName="description" />
+            </div>
+            <div>
+                <button class="cancel-button" type="button" (click)="handleCancel()">Cancel</button>
+                <button class="submit-button" type="submit" [disabled]="projectForm.invalid">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>

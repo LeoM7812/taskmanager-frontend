@@ -1,0 +1,24 @@
+<div class="project-container" *ngIf="projects$ | async as projects">
+    <div *ngFor="let project of projects" class="project-item">
+        <div class="project-header">
+            <h2>{{ project.name }}</h2>
+        </div>
+        <div *ngIf="isAdmin" class="admin-actions">
+            <button (click)="updateProject(project)" class="action-button">✏️</button>
+            <button (click)="deleteProject(project.id)" class="action-button">❌</button>
+            <button (click)="addNewProject()" class="action-button">➕ Add New Project</button>
+        </div>
+        <app-task-list [tasks]="project.tasks"
+        [projectid]="project.id"
+        (taskUpdated)="updateProjects()"></app-task-list>
+    </div>
+</div>
+
+<div *ngIf="showModal">
+    <app-project-form
+        (closePanel)="handleModalClose()"
+        [currentProject]="selectedProject"
+        [formType]="formType">
+    </app-project-form>
+</div>
+

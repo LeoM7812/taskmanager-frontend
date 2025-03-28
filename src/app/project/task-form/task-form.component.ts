@@ -14,6 +14,7 @@ import {
 } from '@angular/forms';
 import { Task } from '../../task.model';
 import { TaskService } from '../../services/task.service';
+import { ProjectListComponent } from '../project-list/project-list.component';
 
 @Component({
   selector: 'app-task-form',
@@ -23,9 +24,11 @@ import { TaskService } from '../../services/task.service';
   styleUrl: './task-form.component.css',
 })
 export class TaskFormComponent {
+  
   @Input() currentTask: Task | null = null;
   @Input() formType: 'UPDATE' | 'CREATE' = 'CREATE';
   @Output() closePanel = new EventEmitter<'SUBMIT' | 'CANCEL'>();
+  @Output() taskUpdated = new EventEmitter<void>();
   taskForm: FormGroup;
 
   private taskService = inject(TaskService);
@@ -54,21 +57,34 @@ export class TaskFormComponent {
   }
 
   handleSubmit() {
+    
     if (this.taskForm.valid) {
       const newTask: Task = {
         ...this.taskForm.value,
         dueDate: new Date(this.taskForm.value.dueDate),
-        completed:
-          this.formType === 'UPDATE' ? this.taskForm.value.completed : false,
+        completed: this.formType === 'UPDATE' ? this.taskForm.value.completed : false,
+        project: this.currentTask?.project || null,
       };
-
-      if (this.formType === 'CREATE') {
-        this.taskService.addTask(newTask).subscribe(() => {
-          this.closePanel.emit('SUBMIT');
+      console.log(this.currentTask?.project.id);
+      console.log('New task:', newTask.project.id);
+      if (this.formType === 'CREATE') {0
+        this.taskService.addTask(newTask).subscribe({
+          next: (response) => {
+            console.log('Task created successfully:', response);
+            this.taskUpdated.emit(); // Emit event
+            this.closePanel.emit('SUBMIT');
+          },
+          error: (error) => console.error('Error creating task:', error),
         });
       } else {
-        this.taskService.updateTask(newTask).subscribe(() => {
-          this.closePanel.emit('SUBMIT');
+        newTask.id = this.currentTask?.id || 0;
+        this.taskService.updateTask(newTask).subscribe({
+          next: (response) => {
+            console.log('Task updated successfully:', response);
+            this.taskUpdated.emit(); // Emit event
+            this.closePanel.emit('SUBMIT');
+          },
+          error: (error) => console.error('Error updating task:', error),
         });
       }
     }

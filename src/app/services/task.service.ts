@@ -10,38 +10,6 @@ const BASE_URL = 'http://localhost:8080/api';
 })
 export class TaskService {
   tasks: Task[] = [
-    {
-      id: 1,
-      name: 'Design wireframe',
-      description: '',
-      completed: false,
-      dueDate: new Date('2023-07-31'),
-      project: 1,
-    },
-    {
-      id: 2,
-      name: 'Develop frontend',
-      description: '',
-      completed: true,
-      dueDate: new Date('2023-06-15'),
-      project: 1,
-    },
-    {
-      id: 3,
-      name: 'Implement backend',
-      description: '',
-      completed: false,
-      dueDate: new Date('2023-08-15'),
-      project: 1,
-    },
-    {
-      id: 4,
-      name: 'Have a party',
-      description: '',
-      completed: true,
-      dueDate: new Date('2023-11-15'),
-      project: 1,
-    },
   ];
   constructor(private http: HttpClient) {}
 
@@ -49,15 +17,18 @@ export class TaskService {
   getTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(`${BASE_URL}/tasks`);
   }
-
+  getTasksByProjectId(id: number): Observable<Task[]> {
+    return this.http.get<Task[]>(`${BASE_URL}/projects/${id}/tasks`);
+  }
   // addTask
-  addTask(task: Task) {
-    return this.http.post(`${BASE_URL}/tasks`, { ...task, project: null });
+  addTask(task: Task): Observable<Task> {
+    return this.http.post<Task>(`${BASE_URL}/tasks`, { ...task });
   }
 
   // updateTask
-  updateTask(newTask: Task) {
-    return this.http.put(`${BASE_URL}/tasks/${newTask.id}`, {
+  updateTask(newTask: Task): Observable<Task> {
+    console.log('newTask:', newTask);
+    return this.http.put<Task>(`${BASE_URL}/tasks/${newTask.id}`, {
       ...newTask,
       project: null,
     });
