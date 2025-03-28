@@ -40,7 +40,7 @@ npm install
 ng serve
 ```
 4️⃣ Open your browser and access
-🔗 [Link text Here]http://localhost:4200 🚀
+🔗 http://localhost:4200 🚀
 
 📢 Connect with Me
 If you're interested in discussing web development, Angular, or full-stack applications, feel free to connect with me on LinkedIn or check out my other projects on GitHub!
