@@ -88,6 +88,7 @@ export class TaskFormComponent {
         dueDate: new Date(this.taskForm.value.dueDate),
         completed: this.formType === 'UPDATE' ? this.taskForm.value.completed : false,
         project: this.currentTask?.project || null,
+        user: this.currentTask?.user || null,
       };
       console.log(this.currentTask?.project.id);
       console.log('New task:', newTask.project.id);
